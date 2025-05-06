@@ -1,0 +1,23 @@
+targets:
+  $default:
+    sources:
+      - $package$
+      - pubspec.yaml
+      - lib/**
+    builders:
+      drift_dev:
+        generate_for:
+          include:
+            - lib/core/database/**
+        options:
+          fatal_warnings: true
+          generate_values_in_copy_with: true
+          generate_manager: false
+          row_class_constructor_all_required: true
+          store_date_time_values_as_text: true
+      theme_tailor:
+        generate_for:
+          include:
+            - lib/theme/**
+        options:
+          theme_getter: on_theme_data

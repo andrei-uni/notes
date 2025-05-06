@@ -1,20 +1,48 @@
+import 'dart:async';
+
+import 'package:bloc_concurrency/bloc_concurrency.dart' as bloc_concurrency;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes/features/initialization/logic/app_dependencies_factory.dart';
+import 'package:notes/features/initialization/widget/scoped_app.dart';
 
 void main() {
-  runApp(const MainApp());
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      _setupSystem();
+      _setupBloc();
+
+      final appDependenciesContainer = await AppDependenciesFactory().create();
+
+      runApp(
+        ScopedApp(
+          appDependenciesContainer: appDependenciesContainer,
+        ),
+      );
+    },
+    (error, stackTrace) {
+      print('$error$stackTrace');
+    },
+  );
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+void _setupSystem() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
-  }
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.transparent,
+  ));
+
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.edgeToEdge,
+  );
+}
+
+void _setupBloc() {
+  Bloc.transformer = bloc_concurrency.sequential();
 }
