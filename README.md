@@ -41,3 +41,5 @@
     <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/5.png" width="32%">
     <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/6.png" width="32%">
 </p>
+
+<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/animation.gif" width="32%">
