@@ -67,6 +67,7 @@ class _SearchFieldWidgetState extends State<SearchFieldWidget> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: 'Поиск',
+          isCollapsed: true,
           contentPadding: const EdgeInsetsDirectional.only(start: 20),
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
@@ -85,6 +86,7 @@ class _SearchFieldWidgetState extends State<SearchFieldWidget> {
                 padding: EdgeInsets.zero,
                 icon: const Icon(Icons.close),
               ),
+              const SizedBox(width: 5),
             ],
           ),
         ),

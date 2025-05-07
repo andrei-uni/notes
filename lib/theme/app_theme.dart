@@ -47,7 +47,6 @@ abstract final class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
         surfaceTintColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
       ),
       extensions: [
         noteListItemTheme,
