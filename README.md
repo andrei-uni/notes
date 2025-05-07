@@ -4,17 +4,7 @@
 
 Приложение для создания заметок, работающее на iOS, Android, MacOS, Windows. Реализована тёмная тема, поиск заметок и сортировка по дате создания.
 
-<p float="left">
-    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/1.png" width="32%">
-    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/2.png" width="32%">
-    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/3.png" width="32%">
-</p>
-
-<p float="left">
-    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/4.png" width="32%">
-    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/5.png" width="32%">
-    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/6.png" width="32%">
-</p>
+Скриншоты ниже.
 
 ## Запуск
 
@@ -37,3 +27,17 @@
 В качестве локального хранилища данных используется ```drift``` - обертка над ```sqlite```.
 
 Вся бизнес логика приложения инкапсулирована в ```bloc```'и, которые в свою очередь вызывают методы репозиториев. Репозитории скрывают детали того, откуда приходят данные и пребразовывают бизнес-модели в сырые данные и передают их в сервисы, которые уже напрямую работают с внешними источниками данных.
+
+## Скриншоты
+
+<p float="left">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/1.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/2.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/3.png" width="32%">
+</p>
+
+<p float="left">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/4.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/5.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/6.png" width="32%">
+</p>
