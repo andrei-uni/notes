@@ -4,12 +4,12 @@
 
 Приложение для создания заметок, работающее на iOS, Android, MacOS, Windows. Реализована тёмная тема, поиск заметок и сортировка по дате создания.
 
-![Scr1](/screenshots/1.png?raw=true)
-![Scr2](/screenshots/2.png?raw=true)
-![Scr3](/screenshots/3.png?raw=true)
-![Scr4](/screenshots/4.png?raw=true)
-![Scr5](/screenshots/5.png?raw=true)
-![Scr6](/screenshots/6.png?raw=true)
+![Scr1](/screenshots/1.png?raw=true | height=150)
+![Scr2](/screenshots/2.png?raw=true | height=150)
+![Scr3](/screenshots/3.png?raw=true | height=150)
+![Scr4](/screenshots/4.png?raw=true | height=150)
+![Scr5](/screenshots/5.png?raw=true | height=150)
+![Scr6](/screenshots/6.png?raw=true | height=150)
 
 ## Запуск
 
