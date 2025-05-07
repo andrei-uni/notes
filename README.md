@@ -4,12 +4,17 @@
 
 Приложение для создания заметок, работающее на iOS, Android, MacOS, Windows. Реализована тёмная тема, поиск заметок и сортировка по дате создания.
 
-<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/1.png" width="230">
-<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/2.png" width="230">
-<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/3.png" width="230">
-<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/4.png" width="230">
-<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/5.png" width="230">
-<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/6.png" width="230">
+<p float="left">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/1.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/2.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/3.png" width="32%">
+</p>
+
+<p float="left">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/4.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/5.png" width="32%">
+    <img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/6.png" width="32%">
+</p>
 
 ## Запуск
 
