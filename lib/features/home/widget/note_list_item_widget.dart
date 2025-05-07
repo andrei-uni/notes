@@ -9,6 +9,7 @@ class NoteListItemWidget extends StatelessWidget {
     required this.noteContent,
     required this.creationDate,
     required this.onTap,
+    required this.onDelete,
     super.key,
   });
 
@@ -16,6 +17,7 @@ class NoteListItemWidget extends StatelessWidget {
   final String noteContent;
   final DateTime creationDate;
   final VoidCallback onTap;
+  final VoidCallback onDelete;
 
   static const BorderRadius _borderRadius = BorderRadius.all(Radius.circular(15));
 
@@ -54,33 +56,54 @@ class NoteListItemWidget extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: _borderRadius,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  noteTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.titleMedium,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      noteTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.titleMedium,
+                    ),
+                    if (noteContent.isNotEmpty)
+                      Text(
+                        noteContent,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium,
+                      ),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Text(
+                        createDate(context),
+                        style: textTheme.labelMedium,
+                      ),
+                    ),
+                  ],
                 ),
-                if (noteContent.isNotEmpty)
-                  Text(
-                    noteContent,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.bodyMedium,
-                  ),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: Text(
-                    createDate(context),
-                    style: textTheme.labelMedium,
-                  ),
+              ),
+              Positioned.directional(
+                end: 8,
+                top: 5,
+                textDirection: Directionality.of(context),
+                child: PopupMenuButton(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem<void>(
+                        onTap: onDelete,
+                        child: const Text('Удалить'),
+                      ),
+                    ];
+                  },
+                  child: const Icon(Icons.more_horiz, size: 20),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

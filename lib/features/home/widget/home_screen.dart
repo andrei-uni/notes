@@ -81,6 +81,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
+  void deleteNote(int noteId) {
+    notesListBloc.add(NotesListEvent.deleteNote(noteId: noteId));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -180,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   return Dismissible(
                     key: ValueKey(note.id),
                     direction: DismissDirection.endToStart,
-                    onDismissed: (_) => notesListBloc.add(NotesListEvent.deleteNote(noteId: note.id)),
+                    onDismissed: (_) => deleteNote(note.id),
                     background: ColoredBox(
                       color: theme.colorScheme.errorContainer,
                       child: const Align(
@@ -196,6 +200,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       noteContent: note.content,
                       creationDate: note.creationDate,
                       onTap: () => onNoteTap(note.id),
+                      onDelete: () => deleteNote(note.id),
                     ),
                   );
                 },
