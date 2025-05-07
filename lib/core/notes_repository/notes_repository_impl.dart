@@ -12,6 +12,52 @@ class NotesRepositoryImpl implements NotesRepository {
 
   final AppDatabase appDatabase;
 
+  // Обработка ошибок могла бы выглядеть так:
+  // Если мы предполагаем, что метод может выкинуть ошибку опеределенного типа,
+  // то перехватываем ее и переводим в тип доменного слоя, как сделано в примере.
+  // В противном же случае - у нас возникла непредвиденная ситуация, о которой
+  // нужно сообщить "наверх", то есть пробрасываем ошибку выше.
+  // Она пробросится в метод onError у runZonedGuarded, в который обернуто все приложение.
+  // А в нем уже можно залогировать эту ошибку.
+  //
+  // < ----- Пример ----- >
+  //
+  // Future<Result<User, LoginError>> login(String email, String password) async {
+  //   try {
+  //     final userResponse = await authService.login(email, password);
+  //     return Result.success(userResponse.toModel());
+  //   } on DioException catch (e) {
+  //     if (e.response?.statusCode == 401) {
+  //       return Result.failure(LoginError.invalidEmailOrPassword);
+  //     }
+  //     if (e.response?.statusCode == 403) {
+  //       return Result.failure(LoginError.userBanned);
+  //     }
+  //     rethrow;
+  //   }
+  // }
+  //
+  // Так как потенциальных ошибок может быть несколько, то можно использовать тип Result.
+  // Если данные для входа неверные, либо пользователь заблокирован, то http-клиент
+  // выкинет ошибку, которую нам нужно обработать и преобразовать в наш тип LoginError,
+  // который может быть enum или sealed class (когда нужно передать какие-то данные вместе с типом ошибки).
+  //
+
+  @override
+  Future<Note?> getNote({required int noteId}) async {
+    try {
+      final noteTableData = await appDatabase.getNote(id: noteId);
+      return noteTableData.toModel();
+    } on StateError {
+      // Если в дб не найдется заметка c нужным id, то произойдет StateError.
+      // В данном случае не нужна особая обработка ошибки и возврат конкретного типа ошибки,
+      // как в примере выше. Так как метод возвращает 'Note?', нам нужно только знать нашлась ли такая
+      // заметка или нет.
+      return null;
+    }
+    // Если это не StateError, то сам метод завершится ошибкой, и она пробросится выше.
+  }
+
   @override
   Future<Note> addNote(NoteData note) async {
     final row = note.toRowInsert();
@@ -22,12 +68,6 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<void> deleteNote({required int noteId}) async {
     await appDatabase.deleteNote(id: noteId);
-  }
-
-  @override
-  Future<Note> getNote({required int noteId}) async {
-    final row = await appDatabase.getNote(id: noteId);
-    return row!.toModel(); //TODO
   }
 
   @override

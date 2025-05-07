@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:notes/core/models/note.dart';
 import 'package:notes/core/models/notes_sort_mode.dart';
-import 'package:notes/features/create_note/widget/create_note_screen.dart';
+import 'package:notes/features/edit_note/widget/edit_note_screen.dart';
 import 'package:notes/features/home/notes_list_bloc/notes_list_bloc.dart';
 import 'package:notes/features/home/widget/note_list_item_widget.dart';
 import 'package:notes/features/home/widget/search_field_widget.dart';
@@ -22,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late final NotesListBloc notesListBloc;
+  late final StreamSubscription<NotesListState> blocSub;
 
   late final AnimationController searchAnimationController;
   late final Animation<double> searchScaleAnimation;
@@ -37,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       notesChangesListener: appDependenciesContainer.notesChangesListener,
       notesChangesReporter: appDependenciesContainer.notesChangesReporter,
     );
+    blocSub = notesListBloc.stream.listen(blocListener);
 
     searchAnimationController = AnimationController(
       vsync: this,
@@ -50,10 +54,36 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   void dispose() {
+    blocSub.cancel();
     notesListBloc.close();
     searchAnimationController.dispose();
     searchFocusNode.dispose();
     super.dispose();
+  }
+
+  void blocListener(NotesListState state) {
+    switch (state) {
+      case NotesListState_FailedToUpdateNote():
+        showDialog<void>(
+          context: context,
+          builder: (alertContext) {
+            return AlertDialog(
+              title: const Text('Ошибка обновления'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(alertContext);
+                  },
+                  child: const Text('ОК'),
+                ),
+              ],
+            );
+          },
+        );
+
+      default:
+        break;
+    }
   }
 
   void searchChanged(String value) {
@@ -77,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   void onNoteTap(int noteId) {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (context) => CreateNoteScreen(noteId: noteId)),
+      MaterialPageRoute<void>(builder: (context) => EditNoteScreen(noteId: noteId)),
     );
   }
 
@@ -156,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (context) => const CreateNoteScreen(noteId: null),
+                builder: (context) => const EditNoteScreen(noteId: null),
                 allowSnapshotting: false,
               ),
             );

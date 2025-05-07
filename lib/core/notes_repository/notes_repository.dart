@@ -10,7 +10,7 @@ abstract interface class NotesRepository {
     required String? searchQuery,
   });
 
-  Future<Note> getNote({required int noteId});
+  Future<Note?> getNote({required int noteId});
 
   Future<Note> addNote(NoteData note);
 

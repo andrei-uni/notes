@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:notes/core/models/note.dart';
-import 'package:notes/features/create_note/bloc/create_note_bloc.dart';
+import 'package:notes/features/edit_note/bloc/edit_note_bloc.dart';
 import 'package:notes/features/initialization/widget/app_dependencies_scope.dart';
 
-class CreateNoteScreen extends StatefulWidget {
-  const CreateNoteScreen({
+class EditNoteScreen extends StatefulWidget {
+  const EditNoteScreen({
     required this.noteId,
     super.key,
   });
@@ -14,12 +14,12 @@ class CreateNoteScreen extends StatefulWidget {
   final int? noteId;
 
   @override
-  State<CreateNoteScreen> createState() => _CreateNoteScreenState();
+  State<EditNoteScreen> createState() => _EditNoteScreenState();
 }
 
-class _CreateNoteScreenState extends State<CreateNoteScreen> {
-  late final CreateNoteBloc createNoteBloc;
-  late final StreamSubscription<CreateNoteState> blocSub;
+class _EditNoteScreenState extends State<EditNoteScreen> {
+  late final EditNoteBloc editNoteBloc;
+  late final StreamSubscription<EditNoteState> blocSub;
 
   final titleController = TextEditingController();
   final contentController = TextEditingController();
@@ -31,14 +31,14 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
   void initState() {
     super.initState();
     final appDependenciesContainer = AppDependenciesScope.of(context);
-    createNoteBloc = CreateNoteBloc(
+    editNoteBloc = EditNoteBloc(
       notesRepository: appDependenciesContainer.notesRepository,
       notesChangesReporter: appDependenciesContainer.notesChangesReporter,
     );
     if (widget.noteId != null) {
-      createNoteBloc.add(CreateNoteEvent.loadNote(noteId: widget.noteId!));
+      editNoteBloc.add(EditNoteEvent.loadNote(noteId: widget.noteId!));
     }
-    blocSub = createNoteBloc.stream.listen(blocListener);
+    blocSub = editNoteBloc.stream.listen(blocListener);
 
     if (isCreatingNote) {
       titleFocusNode.requestFocus();
@@ -51,17 +51,37 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
     contentController.dispose();
     titleFocusNode.dispose();
     blocSub.cancel();
-    createNoteBloc.close();
+    editNoteBloc.close();
     super.dispose();
   }
 
-  void blocListener(CreateNoteState state) {
+  void blocListener(EditNoteState state) {
     switch (state) {
-      case CreateNoteState_LoadedNote(:final Note loadedNote):
+      case EditNoteState_LoadedNote(:final Note loadedNote):
         titleController.text = loadedNote.title;
         contentController.text = loadedNote.content;
 
-      case CreateNoteState_Success():
+      case EditNoteState_LoadedNoteFailure():
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (alertContext) {
+            return AlertDialog(
+              title: const Text('Ошибка загрузки заметки'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(alertContext);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('ОК'),
+                ),
+              ],
+            );
+          },
+        );
+
+      case EditNoteState_Success():
         Navigator.pop(context);
 
       default:
@@ -91,7 +111,7 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
       return;
     }
 
-    createNoteBloc.add(CreateNoteEvent.saveNote(
+    editNoteBloc.add(EditNoteEvent.saveNote(
       title: titleController.text.trim(),
       content: contentController.text.trim(),
     ));
@@ -128,7 +148,7 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
     );
 
     if (confirmDelete ?? false) {
-      createNoteBloc.add(const CreateNoteEvent.deleteNote());
+      editNoteBloc.add(const EditNoteEvent.deleteNote());
     }
   }
 

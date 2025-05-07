@@ -30,10 +30,10 @@ mixin _NotesMixin on _$AppDatabase {
     return await query.get();
   }
 
-  Future<NotesTableData?> getNote({
+  Future<NotesTableData> getNote({
     required int id,
   }) async {
-    return await (select(notesTable)..where((e) => e.id.equals(id))).getSingleOrNull();
+    return await (select(notesTable)..where((e) => e.id.equals(id))).getSingle();
   }
 
   Future<NotesTableData> insertNote(NotesTableCompanion note) async {

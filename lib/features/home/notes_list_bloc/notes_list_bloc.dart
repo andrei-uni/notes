@@ -23,7 +23,7 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
   })  : _notesRepository = notesRepository,
         _notesChangesReporter = notesChangesReporter,
         _notesChangesListener = notesChangesListener,
-        super(NotesListState(
+        super(NotesListState.idle(
           notesPagingState: PagingStateNoEqual(),
           notesSortMode: NotesSortMode.dateDesc,
           searchQuery: null,
@@ -89,7 +89,7 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
     final noteId = event.noteId;
 
     for (final List<Note> page in state.notesPagingState.pages ?? []) {
-      final noteIndex = page.indexOfWhereOrNull((n) => n.id == noteId);
+      final noteIndex = page.firstIndexWhereOrNull((n) => n.id == noteId);
 
       if (noteIndex != null) {
         page.removeAt(noteIndex);
@@ -139,10 +139,16 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
 
       case NotesChangedEvent_UpdatedNote(:final noteId):
         for (final List<Note> page in state.notesPagingState.pages ?? []) {
-          final noteIndex = page.indexOfWhereOrNull((n) => n.id == noteId);
+          final noteIndex = page.firstIndexWhereOrNull((n) => n.id == noteId);
 
           if (noteIndex != null) {
             final updatedNote = await _notesRepository.getNote(noteId: noteId);
+
+            if (updatedNote == null) {
+              emit(state.failedToUpdateNote());
+              emit(state.idle());
+              return;
+            }
 
             page[noteIndex] = updatedNote;
             emit(state.copyWith(
@@ -154,10 +160,10 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
 
       case NotesChangedEvent_DeletedNote(:final noteId):
         for (final List<Note> page in state.notesPagingState.pages ?? []) {
-          final noteIndex = page.indexOfWhereOrNull((n) => n.id == noteId);
+          final deletedNoteIndex = page.firstIndexWhereOrNull((n) => n.id == noteId);
 
-          if (noteIndex != null) {
-            page.removeAt(noteIndex);
+          if (deletedNoteIndex != null) {
+            page.removeAt(deletedNoteIndex);
             emit(state.copyWith(
               notesPagingState: state.notesPagingState.copyWith(),
             ));
