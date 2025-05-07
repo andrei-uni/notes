@@ -4,12 +4,12 @@
 
 Приложение для создания заметок, работающее на iOS, Android, MacOS, Windows. Реализована тёмная тема, поиск заметок и сортировка по дате создания.
 
-![Scr1](/screenshots/1.png?raw=true | height=150)
-![Scr2](/screenshots/2.png?raw=true | height=150)
-![Scr3](/screenshots/3.png?raw=true | height=150)
-![Scr4](/screenshots/4.png?raw=true | height=150)
-![Scr5](/screenshots/5.png?raw=true | height=150)
-![Scr6](/screenshots/6.png?raw=true | height=150)
+<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/1.png" width="230">
+<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/2.png" width="230">
+<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/3.png" width="230">
+<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/4.png" width="230">
+<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/5.png" width="230">
+<img src="https://raw.githubusercontent.com/andrei-uni/notes/refs/heads/master/screenshots/6.png" width="230">
 
 ## Запуск
 
