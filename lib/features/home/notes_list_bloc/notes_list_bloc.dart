@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:notes/core/models/note.dart';
 import 'package:notes/core/notes_changes_notifier/models/notes_changed.dart';
 import 'package:notes/core/notes_changes_notifier/notes_changes_notifier.dart';
 import 'package:notes/core/notes_repository/notes_repository.dart';
 import 'package:notes/core/models/notes_sort_mode.dart';
+import 'package:notes/utils/custom_paging_state.dart';
 import 'package:notes/utils/iterable_extensions.dart';
-import 'package:notes/utils/paging_state_no_equal.dart';
 
 part 'notes_list_event.dart';
 part 'notes_list_state.dart';
@@ -24,7 +23,7 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
         _notesChangesReporter = notesChangesReporter,
         _notesChangesListener = notesChangesListener,
         super(NotesListState.idle(
-          notesPagingState: PagingStateNoEqual(),
+          notesPagingState: CustomPagingState(),
           notesSortMode: NotesSortMode.dateDesc,
           searchQuery: null,
         )) {
@@ -66,7 +65,7 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
       ),
     ));
 
-    final offset = (pagingState.pages?.length ?? 0) * _limit;
+    final offset = pagingState.length;
 
     final newNotes = await _notesRepository.getNotes(
       limit: _limit,
@@ -88,17 +87,9 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
   Future<void> _onDeleteNote(_DeleteNote event, Emitter<NotesListState> emit) async {
     final noteId = event.noteId;
 
-    for (final List<Note> page in state.notesPagingState.pages ?? []) {
-      final noteIndex = page.firstIndexWhereOrNull((n) => n.id == noteId);
-
-      if (noteIndex != null) {
-        page.removeAt(noteIndex);
-        emit(state.copyWith(
-          notesPagingState: state.notesPagingState.copyWith(),
-        ));
-        break;
-      }
-    }
+    state.notesPagingState.removeFirstItemWhere(
+      (n) => n.id == noteId,
+    );
 
     emit(state.copyWith(
       notesPagingState: state.notesPagingState.copyWith(),
@@ -138,37 +129,43 @@ class NotesListBloc extends Bloc<NotesListEvent, NotesListState> {
         ));
 
       case NotesChangedEvent_UpdatedNote(:final noteId):
-        for (final List<Note> page in state.notesPagingState.pages ?? []) {
-          final noteIndex = page.firstIndexWhereOrNull((n) => n.id == noteId);
-
-          if (noteIndex != null) {
-            final updatedNote = await _notesRepository.getNote(noteId: noteId);
-
-            if (updatedNote == null) {
-              emit(state.failedToUpdateNote());
-              emit(state.idle());
-              return;
-            }
-
-            page[noteIndex] = updatedNote;
-            emit(state.copyWith(
-              notesPagingState: state.notesPagingState.copyWith(),
-            ));
-            return;
-          }
+        final notePage = state.notesPagingState.firstPageWhereOrNull(
+          (page) => page.containsWhere((note) => note.id == noteId),
+        );
+        if (notePage == null) {
+          return;
         }
 
-      case NotesChangedEvent_DeletedNote(:final noteId):
-        for (final List<Note> page in state.notesPagingState.pages ?? []) {
-          final deletedNoteIndex = page.firstIndexWhereOrNull((n) => n.id == noteId);
+        final updatedNote = await _notesRepository.getNote(noteId: noteId);
 
-          if (deletedNoteIndex != null) {
-            page.removeAt(deletedNoteIndex);
-            emit(state.copyWith(
-              notesPagingState: state.notesPagingState.copyWith(),
-            ));
-            return;
-          }
+        if (updatedNote == null) {
+          emit(state.failedToUpdateNote());
+          emit(state.idle());
+          return;
+        }
+
+        final result = state.notesPagingState.whereOrNull((note) => note.id == noteId);
+        if (result == null) {
+          return;
+        }
+
+        final (_, page, noteIndex) = result;
+
+        page[noteIndex] = updatedNote;
+
+        emit(state.copyWith(
+          notesPagingState: state.notesPagingState.copyWith(),
+        ));
+
+      case NotesChangedEvent_DeletedNote(:final noteId):
+        final didRemove = state.notesPagingState.removeFirstItemWhere(
+          (n) => n.id == noteId,
+        );
+
+        if (didRemove) {
+          emit(state.copyWith(
+            notesPagingState: state.notesPagingState.copyWith(),
+          ));
         }
     }
   }

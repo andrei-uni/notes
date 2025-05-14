@@ -5,13 +5,13 @@ sealed class NotesListState with _$NotesListState {
   const NotesListState._();
 
   const factory NotesListState.idle({
-    required PagingState<int, Note> notesPagingState,
+    required CustomPagingState<int, Note> notesPagingState,
     required NotesSortMode notesSortMode,
     required String? searchQuery,
   }) = NotesListState_Idle;
 
   const factory NotesListState.failedToUpdateNote({
-    required PagingState<int, Note> notesPagingState,
+    required CustomPagingState<int, Note> notesPagingState,
     required NotesSortMode notesSortMode,
     required String? searchQuery,
   }) = NotesListState_FailedToUpdateNote;

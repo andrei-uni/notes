@@ -45,13 +45,13 @@ class EditNoteBloc extends Bloc<EditNoteEvent, EditNoteState> {
     final loadedNote = state.loadedNote;
 
     if (loadedNote == null) {
-      final newNoteDate = NoteData(
+      final newNoteData = NoteData(
         title: event.title,
         content: event.content,
         creationDate: DateTime.now(),
       );
 
-      final newNote = await _notesRepository.addNote(newNoteDate);
+      final newNote = await _notesRepository.addNote(newNoteData);
       _notesChangesReporter.report(NotesChangedEvent.addedNote(noteId: newNote.id));
 
       emit(const EditNoteState.success());
@@ -74,10 +74,10 @@ class EditNoteBloc extends Bloc<EditNoteEvent, EditNoteState> {
   Future<void> _onDeleteNote(_DeleteNote event, Emitter<EditNoteState> emit) async {
     assert(state.loadedNote != null);
 
-    final loadedNote = state.loadedNote!;
+    final noteId = state.loadedNote!.id;
 
-    await _notesRepository.deleteNote(noteId: loadedNote.id);
-    _notesChangesReporter.report(NotesChangedEvent.deletedNote(noteId: loadedNote.id));
+    await _notesRepository.deleteNote(noteId: noteId);
+    _notesChangesReporter.report(NotesChangedEvent.deletedNote(noteId: noteId));
 
     emit(const EditNoteState.success());
   }
